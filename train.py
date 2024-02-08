@@ -2,7 +2,7 @@ import transformers
 import dataset
 import os
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from peft import prepare_model_for_kbit_training, get_peft_model
+from peft import prepare_model_for_kbit_training, get_peft_model, LoraConfig
 import wandb
 import hyper_params as h
 from lora_config import lora_config
@@ -24,8 +24,18 @@ model = AutoModelForCausalLM.from_pretrained("NousResearch/Llama-2-7b-hf", quant
 model.gradient_checkpointing_enable()
 model = prepare_model_for_kbit_training(model)
 
+#configure lora
+config = LoraConfig(
+    r=h.LORA_R, 
+    lora_alpha=h.LORA_ALPHA, 
+    target_modules=["q_proj", "v_proj"], 
+    lora_dropout=h.LORA_DROPOUT, 
+    bias="none", 
+    task_type="CAUSAL_LM"
+)
+
 #add lora adaptors to model
-model = get_peft_model(model, lora_config)
+model = get_peft_model(model, config)
 
 
 trainer = transformers.Trainer(
@@ -51,7 +61,7 @@ trainer = transformers.Trainer(
 )
 
 
-model.lora_config.use_cache = False
+model.config.use_cache = False
 wandb.finish()
 trainer.train()
 model.save_pretrained("./weights")

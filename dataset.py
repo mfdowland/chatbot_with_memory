@@ -10,7 +10,7 @@ class TrainConvoData(torch.utils.data.Dataset):
         self.tokenizer.padding_side = "left"
         self.ds = datasets.load_dataset("knkarthick/dialogsum")
         self.ds = self.ds["train"]
-        self.ds = self.ds.map(self.prompt, remove_columns=["dialog", "summary", "topic"], load_from_cache_file=False, num_proc=8) #need to remove the id column?
+        self.ds = self.ds.map(self.prompt, remove_columns=["dialogue", "summary", "topic"], load_from_cache_file=False, num_proc=8) #need to remove the id column?
         self.ds = self.ds.map(self.tokenize, remove_columns=["prompt"], load_from_cache_file=False, num_proc=8)
 
     def __len__(self):
@@ -21,7 +21,7 @@ class TrainConvoData(torch.utils.data.Dataset):
 
     def prompt(self, elm):
         #change dialog to be #Person1#: etc without last line
-        conversation = elm["dialog"]
+        conversation = elm["dialogue"]
 
         #need conversation history and last one separate
         last_line_index = conversation.rfind("#Person2#")

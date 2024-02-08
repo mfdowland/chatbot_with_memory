@@ -4,4 +4,4 @@ torch
 pandas
 peft
 wandb
-os
+bitsandbytes

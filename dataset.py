@@ -20,7 +20,7 @@ class TrainConvoData(torch.utils.data.Dataset):
         return self.ds[idx]
 
     def prompt(self, elm):
-        #change dialog to be #Person1#: etc without last line
+        #change dialogue to be #Person1#: etc without last line
         conversation = elm["dialogue"]
 
         #need conversation history and last one separate
@@ -31,7 +31,6 @@ class TrainConvoData(torch.utils.data.Dataset):
         prompt = TEMPLATE.format(conversation_history = convo_history, summary = elm["summary"], topic = elm["topic"])
         prompt = prompt + reply
         return {"prompt": prompt}
-        #should I get rid of the person1 and person2 though
 
     def tokenize(self, elm):
         res = self.tokenizer(elm["prompt"])
